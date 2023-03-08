@@ -7,4 +7,8 @@ router.get('/', function(req, res, next){
     	res.sendFile(path.join(__dirname, '../public/index.html'));
 })
 
+router.get('/pixel', function(req, res, next){
+	res.redirect('/');
+})
+
 module.exports = router;

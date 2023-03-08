@@ -1,23 +1,43 @@
 var WebSocket = require('ws');
 var db = require('../db/db.js');
 
-let wss;
-let ip_update = {};
-const time_to_update = 1000;
+let wss; let ip_update = {}; const time_to_update = 250;
+
+function startGrid(ws){
+	db.pool.getConnection()
+	.then( conn => {
+		conn.query('SELECT i, c FROM GRID ORDER BY c;')
+		.then( rows => {
+			ws.send(createDict(rows));
+		})
+		.catch(err => {
+			console.log("Query error grid get: " + err);
+		})
+		conn.release();
+	})
+	.catch(err => {
+		console.log("Not connected due to error: " + err);
+	});
+}
 
 // When a message is transmited to a websocket, validate it, update db and broadcast to all other
 // websockets
 function receiveMessage(ws, message){
 	let ip = ws._socket.remoteAddress;
 
+	// Parse message to string
+	let string_message = message.toString();
+
+	if(string_message == "33"){
+		startGrid(ws);
+		return;
+	}
+
 	// Check if user can update
 	if(ip in ip_update && new Date().getTime() - ip_update[ip] < time_to_update){
 		ws.send('ERR_TIME_UPDATE');
 		return;
 	}
-
-	// Parse message to string
-	let string_message = message.toString();
 
 	console.log("Update: " + ws._socket.remoteAddress + ", " + string_message);
 
@@ -40,17 +60,20 @@ function receiveMessage(ws, message){
 	}
 
 	// Validate tile id
-	if(value < 0 || value > 16383){
+	if(value < 0 || value > 40000){
 		ws.send('ERR_TILE_ID');
 		return;
 	}
 
 	// If is valid
+	// Save time update
+	ip_update[ip] = new Date().getTime();
+
+	//Update
 	db.pool.getConnection()
 	.then( conn => {
 		conn.query(`UPDATE GRID SET c="${key}" WHERE i=${value}`)
 		.then(rows => {
-			ip_update[ip] = new Date().getTime();
 			wss.clients.forEach(function each(client) {
 				if(client.readyState === WebSocket.OPEN){
 					client.send(string_message);
@@ -110,23 +133,9 @@ function createDict(arr){
 
 // When a new ws connects return all tiles
 function onConnection(ws){
-	let jsonRes = {};
+	let ip = ws._socket.remoteAddress;
 
-	db.pool.getConnection()
-	.then( conn => {
-		conn.query('SELECT i, c FROM GRID ORDER BY c;')
-		.then( rows => {
-			// TODO: GENERATE DICT COLOR : [tiles]
-			ws.send(createDict(rows));
-		})
-		.catch(err => {
-			console.log("Query error grid get: " + err);
-		})
-		conn.release();
-	})
-	.catch(err => {
-		console.log("Not connected due to error: " + err);
-	});
+	console.log("Connection from: " + ip);
 }
 
 function createWebSocket(server){
