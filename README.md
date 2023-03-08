@@ -1,27 +1,46 @@
-# Pixels-HackAfor
-## Paint pixels app for HackAfor 
+# Pixel Art - HackAfor
 
-### IP
-13.38.113.187
+This is an online pixel art, basically a game where you can place pixels and create art with other people.
 
-### EndPoints 
-	/color : { 
-		Post parameters : [
-			"id" :  'Tile ID 0, < id < numTiles',
-			"color" : 'Tile Color, "^[0-9A-F]{6}$"'
-		],
-		Response values : [
-			"status" : 'SUCCESS || 500'
-			"body": 'Error description' //Only if status == 500
-		]
-	}
-	/grid/:timeLastUpdate : { 
-		Request parameters: [ 
-			"timeLastUpdate": 'Last time client got an update; "^[0-9]*$"'
-		],
-		Response parameters : [
-			"time_last_update" : 'Last time server got updated + 1 in ms',
-			"tiles" : 'List with tiles updated since timeLastUpdate parameter'
-		]
-	}
+## Table of contents
 
+- [Overview](#overview)
+  - [Screenshot](#screenshot)
+  - [Built with](#built-with)
+- [Authors](#authors)
+
+## Overview
+
+Link to the game: http://13.38.113.187
+
+### Screenshot Home
+
+<img align="center" src="https://user-images.githubusercontent.com/109598200/223772457-120ecbb0-d51e-4c5f-9a8c-f9fcc5d5aaa7.png" alt="El Rincón Del Dev"/>
+
+### Screenshot Game
+<img align="center" src="https://user-images.githubusercontent.com/109598200/223772466-c7ac1fe5-298e-4275-9a8d-b54ccdacfbc1.png" alt="El Rincón Del Dev"/>
+
+### Screenshot Game
+<img align="center" src="https://user-images.githubusercontent.com/109598200/223772476-8421489d-fe16-49ca-abef-fe295bb18f15.png" alt="El Rincón Del Dev" />
+
+### Built with
+
+This is a pixel art created from scratch using React Vite, TailwindCSS, NodeJs, Express, MariaDB, and AWS.
+
+- React Vite
+- TailwindCSS
+- NodeJs
+- Express
+- MariaDB
+- AWS
+
+## Authors
+
+Jose Ramón Montes Hermida:
+
+- TikTok - [@elrincondeldev](https://www.tiktok.com/@elrincondeldev)
+- Instagram - [@elrincondeldev](https://www.instagram.com/elrincondeldev/)
+
+Iván Rodriguez Bouzada:
+
+- Github - [IRB](https://github.com/irbbb)
